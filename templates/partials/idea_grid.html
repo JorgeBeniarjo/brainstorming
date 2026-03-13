@@ -1,0 +1,82 @@
+{% for idea in ideas %}
+<div
+  class="bg-white p-5 rounded-2xl shadow-sm border border-slate-100 flex flex-col justify-between hover:shadow-md transition-shadow"
+>
+  <div>
+    <div class="flex justify-between items-start mb-3">
+      <span
+        class="px-2.5 py-0.5 rounded-full text-xs font-bold uppercase {% if idea.status == 'Idea' %} bg-blue-100 text-blue-600 {% elif idea.status == 'Doing' %} bg-amber-100 text-amber-600 {% elif idea.status == 'Done' %} bg-emerald-100 text-emerald-600 {% else %} bg-slate-100 text-slate-600 {% endif %}"
+      >
+        {{ idea.status }}
+      </span>
+      <div class="flex items-center gap-2">
+        <button
+          @click="$dispatch('edit-idea', {id: '{{ idea.id }}', title: `{{ idea.title|e }}`, description: `{{ idea.description|e }}`, url: '{{ idea.url or '' }}', status: '{{ idea.status }}'})"
+          class="text-slate-300 hover:text-indigo-500 transition-colors"
+        >
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"
+            ></path>
+          </svg>
+        </button>
+        <button
+          hx-post="/ideas/{{ idea.id }}/delete"
+          hx-confirm="¿Eliminar esta idea?"
+          class="text-slate-300 hover:text-red-500 transition-colors"
+        >
+          <svg
+            class="w-5 h-5"
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+          >
+            <path
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              stroke-width="2"
+              d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"
+            ></path>
+          </svg>
+        </button>
+      </div>
+    </div>
+    <h3 class="text-xl font-bold text-slate-800 mb-2">{{ idea.title }}</h3>
+    <p class="text-slate-600 text-sm line-clamp-3 mb-4">
+      {{ idea.description }}
+    </p>
+  </div>
+
+  <div class="flex items-center justify-between mt-auto">
+    <span class="text-[10px] text-slate-400 font-medium"
+      >{{ idea.created_at.strftime('%d %b, %Y') }}</span
+    >
+    {% if idea.url %}
+    <a
+      href="{{ idea.url }}"
+      target="_blank"
+      class="flex items-center gap-1.5 text-indigo-600 font-bold text-sm bg-indigo-50 px-3 py-1.5 rounded-lg hover:bg-indigo-100 transition-colors"
+    >
+      <span>🌐</span>
+      <span>Abrir enlace</span>
+    </a>
+    {% endif %}
+  </div>
+</div>
+{% endfor %} {% if not ideas %}
+<div class="col-span-full py-20 text-center">
+  <div class="text-5xl mb-4 text-slate-200">💡</div>
+  <h3 class="text-lg font-bold text-slate-400">
+    No hay ideas todavía en esta sección
+  </h3>
+  <p class="text-slate-300 text-sm">Empieza creando una nueva idea</p>
+</div>
+{% endif %}
